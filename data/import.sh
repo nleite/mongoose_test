@@ -16,6 +16,13 @@ def insert(document):
         conn = Connection(host)
     conn[databasename][collectionname].save(document)
 
+def ensure_index():
+    global conn
+    global databasename
+    global collectionname
+
+    conn[databasename][collectionname].ensure_index( {'loc': '2d'})
+
 def parse(filename, callback):
     with open(filename, 'rb') as csvfile:
         reader = csv.reader( csvfile, delimiter=',', quotechar='"')
@@ -35,5 +42,8 @@ def parse(filename, callback):
                 #print ', '.join(row)
             except ValueError, e:
                 print 'Skip first lines %s, document %s' % (e, d)
+
+
+    ensure_index()
 
 parse('GeoLiteCity_20090601/GeoLiteCity-Location.csv', insert)
